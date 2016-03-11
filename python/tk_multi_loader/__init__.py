@@ -29,6 +29,19 @@ def show_dialog(app):
     # Create and display the splash screen
     splash_pix = QtGui.QPixmap(":/res/splash.png") 
     splash = QtGui.QSplashScreen(splash_pix, QtCore.Qt.WindowStaysOnTopHint)
+
+    # In 3ds Max, we need to attach the splash to Max's main
+    # window. If we don't, the Loader app's dialog won't properly
+    # parent to Max, either.
+    try:
+        import MaxPlus
+        MaxPlus.AttachQWidgetToMax(splash)
+    except Exception:
+        # This is almost certainly either an ImportError because
+        # we're not in Max, or an AttributeError because we're in
+        # Max, but pre-2016SP1.
+        pass
+
     splash.setMask(splash_pix.mask())
     splash.show()
     QtCore.QCoreApplication.processEvents()
